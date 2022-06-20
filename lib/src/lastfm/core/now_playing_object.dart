@@ -14,7 +14,7 @@ class NowPlaying {
 
   /// The [Album] name to scrobble.
   @JsonKey(name: 'album')
-  String album;
+  String? album;
 
   /// The [Artist] name to scrobble.
   @JsonKey(name: 'artist')
@@ -22,25 +22,25 @@ class NowPlaying {
 
   /// The track number of the [Track] to scrobble.
   @JsonKey(name: 'trackNumber')
-  int trackNumber;
+  int? trackNumber;
 
   /// The duration of the [Track] to scrobble.
   @JsonKey(
       name: 'duration', toJson: LastFMValueNormalizer.DurationToMilliseconds)
-  Duration duration;
+  Duration? duration;
 
   /// Sub-client version (not public, only enabled for certain API keys).
   @JsonKey(name: 'context')
-  String context;
+  String? context;
 
   /// MusicBrainz ID.
   @JsonKey(name: 'mbid')
-  String mbid;
+  String? mbid;
 
   NowPlaying({
-    @required this.track,
+    required this.track,
     this.album,
-    @required this.artist,
+    required this.artist,
     this.trackNumber,
     this.duration,
     this.context,

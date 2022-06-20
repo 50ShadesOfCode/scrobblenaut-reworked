@@ -17,7 +17,7 @@ class ChartMethods {
   /// Get the top artists chart.
   ///
   /// https://www.last.fm/api/show/chart.getTopArtists
-  Future<List<Artist>> getTopArtists({
+  Future<List<Artist>?> getTopArtists({
     int page = 1,
     int limit = 50,
   }) async {
@@ -35,14 +35,14 @@ class ChartMethods {
 
     return topArtists == null
         ? null
-        : List.generate(
-            (topArtists as List).length, (i) => Artist.fromJson(topArtists[i]));
+        : List.generate((topArtists as List).length,
+            (i) => Artist.fromJson(topArtists[i] as Map<String, dynamic>));
   }
 
   /// Get the top tags chart.
   ///
   /// https://www.last.fm/api/show/chart.getTopTags
-  Future<List<Tag>> getTopTags({
+  Future<List<Tag>?> getTopTags({
     int page = 1,
     int limit = 50,
   }) async {
@@ -60,14 +60,14 @@ class ChartMethods {
 
     return topTags == null
         ? null
-        : List.generate(
-            (topTags as List).length, (i) => Tag.fromJson(topTags[i]));
+        : List.generate((topTags as List).length,
+            (i) => Tag.fromJson(topTags[i] as Map<String, dynamic>));
   }
 
   /// Get the top tracks chart.
   ///
   /// https://www.last.fm/api/show/chart.getTopTracks
-  Future<List<Track>> getTopTracks({
+  Future<List<Track>?> getTopTracks({
     int page = 1,
     int limit = 50,
   }) async {
@@ -85,7 +85,7 @@ class ChartMethods {
 
     return topTrack == null
         ? null
-        : List.generate(
-            (topTrack as List).length, (i) => Track.fromJson(topTrack[i]));
+        : List.generate((topTrack as List).length,
+            (i) => Track.fromJson(topTrack[i] as Map<String, dynamic>));
   }
 }

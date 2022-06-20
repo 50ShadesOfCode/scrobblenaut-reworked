@@ -4,7 +4,6 @@
 //                                                              //
 
 import 'package:dio/dio.dart';
-import 'package:meta/meta.dart';
 import 'package:scrobblenaut/src/helpers/utils.dart';
 import 'package:xml/xml.dart' as xml;
 
@@ -14,35 +13,37 @@ class LastFMException extends DioError {
   final int _errorCode;
   final String _description;
 
-  LastFMException._(this._errorCode, this._description);
+  LastFMException._({required int errorCode, required String description})
+      : _errorCode = errorCode,
+        _description = description,
+        super(requestOptions: RequestOptions(path: ''));
 
-  LastFMException({@required String errorCode, @required String description})
-      : this._(int.parse(errorCode), description);
+  LastFMException({required String errorCode, required String description})
+      : this._(errorCode: int.parse(errorCode), description: description);
 
   factory LastFMException.generate(dynamic errorObject) {
     if (isXml(errorObject.toString())) {
       // Is a XML
-      final xmlError = xml.XmlDocument.parse(errorObject);
+      final xmlError = xml.XmlDocument.parse(errorObject as String);
 
       final failedNode = xmlError.children
           .firstWhere((xmlNode) => xmlNode.getAttribute('status') == 'failed');
 
       // Needed because lastFM is inconsistent even in errors...
       final errorNode = failedNode.children
-          .firstWhere((xmlNode) => xmlNode.getAttribute('code') != null);
+          .firstWhere((xmlNode) => xmlNode.getAttribute('code')!.isNotEmpty);
 
       return LastFMException(
-          errorCode: errorNode.getAttribute('code'),
+          errorCode: errorNode.getAttribute('code')!,
           description: errorNode.text);
     } else {
       // Else is a Json...
       return LastFMException(
           errorCode: errorObject['error'].toString(),
-          description: errorObject['message']);
+          description: errorObject['message'] as String);
     }
   }
 
   @override
-  String toString() =>
-      '[LastFMException] => [Code ${_errorCode}]: ${_description}';
+  String toString() => '[LastFMException] => [Code $_errorCode]: $_description';
 }

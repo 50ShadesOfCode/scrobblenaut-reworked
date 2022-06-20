@@ -10,10 +10,8 @@ class ScrobblenautException implements Exception {
 
   ScrobblenautException._(this._description);
 
-  ScrobblenautException({String description}) : this._(description);
+  ScrobblenautException({required String description}) : this._(description);
 
   @override
-  String toString() =>
-      '[ScrobblenautException]' +
-      (_description != null ? ': ${_description}' : '');
+  String toString() => '[ScrobblenautException]' + _description;
 }

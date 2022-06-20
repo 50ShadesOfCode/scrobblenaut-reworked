@@ -3,7 +3,6 @@
 //                  Copyright (c) 2020 Nebulino                 //
 //                                                              //
 
-import 'package:meta/meta.dart';
 import 'package:scrobblenaut/lastfm.dart';
 import 'package:scrobblenaut/scrobblenaut_exceptions.dart';
 import 'package:scrobblenaut/src/core/lastfm.dart';
@@ -22,8 +21,8 @@ class ArtistMethods {
   ///
   /// https://www.last.fm/api/show/artist.addTags
   Future<bool> addTags({
-    @required String artist,
-    @required List<String> tags,
+    required String artist,
+    required List<String> tags,
   }) async {
     if (!_api.isAuth) {
       return Future.error(ScrobblenautException(
@@ -44,8 +43,8 @@ class ArtistMethods {
         Request(api: _api, method: 'artist.addTags', parameters: parameters)
           ..signRequest();
 
-    final response =
-        PostResponseHelper.parse(await request.send(mode: RequestMode.POST));
+    final response = PostResponseHelper.parse(
+        await request.send(mode: RequestMode.POST) as String);
 
     if (response.status) {
       return true;
@@ -59,7 +58,7 @@ class ArtistMethods {
   ///
   /// https://www.last.fm/api/show/artist.getCorrection
   Future<List<Artist>> getCorrection({
-    @required String artist,
+    required String artist,
   }) async {
     final parameters = {
       'artist': artist,
@@ -75,21 +74,24 @@ class ArtistMethods {
     if (corrections is List) {
       return List.generate(
           corrections.length,
-          (i) => Artist.fromJson(
-              response['corrections']['correction']['artist'][i]));
+          (i) => Artist.fromJson(response['corrections']['correction']['artist']
+              [i] as Map<String, dynamic>));
     }
 
     // A list of a single correction.
-    return [Artist.fromJson(corrections['correction']['artist'])];
+    return [
+      Artist.fromJson(
+          corrections['correction']['artist'] as Map<String, dynamic>)
+    ];
   }
 
   /// Get the metadata for an artist. Includes biography, truncated at 300 characters.
   ///
   /// https://www.last.fm/api/show/artist.getInfo
   Future<Artist> getInfo({
-    String artist,
-    String mbid,
-    String username,
+    String? artist,
+    String? mbid,
+    String? username,
     Language language = Language.en,
     bool autoCorrect = false,
   }) async {
@@ -102,24 +104,24 @@ class ArtistMethods {
       'artist': artist,
       'mbid': mbid,
       'username': username,
-      'lang': language?.code,
-      'autocorrect': (autoCorrect ? 1 : 0),
+      'lang': language.code,
+      'autocorrect': autoCorrect ? 1 : 0,
     };
 
     final request =
         Request(api: _api, method: 'artist.getInfo', parameters: parameters);
 
-    return (Artist.fromJson(
-        (await request.send(mode: RequestMode.GET))['artist']));
+    return Artist.fromJson((await request.send(mode: RequestMode.GET))['artist']
+        as Map<String, dynamic>);
   }
 
   /// Get all the artists similar to this artist.
   ///
   /// https://www.last.fm/api/show/artist.getSimilar
-  Future<List<Artist>> getSimilar({
-    String artist,
-    String mbid,
-    int limit,
+  Future<List<Artist>?> getSimilar({
+    String? artist,
+    String? mbid,
+    int? limit,
     bool autoCorrect = false,
   }) async {
     if (artist == null && mbid == null) {
@@ -131,7 +133,7 @@ class ArtistMethods {
       'artist': artist,
       'mbid': mbid,
       'limit': limit,
-      'autocorrect': (autoCorrect ? 1 : 0),
+      'autocorrect': autoCorrect ? 1 : 0,
     };
 
     final request =
@@ -144,7 +146,7 @@ class ArtistMethods {
     return similarArtists == null
         ? null
         : List.generate((similarArtists as List).length,
-            (i) => Artist.fromJson(similarArtists[i]));
+            (i) => Artist.fromJson(similarArtists[i] as Map<String, dynamic>));
   }
 
   /// Get the tags applied by an individual user to an artist on Last.fm.
@@ -155,10 +157,10 @@ class ArtistMethods {
   /// by all users use artist.getTopTags.
   ///
   /// https://www.last.fm/api/show/artist.getTags
-  Future<List<Tag>> getTags({
-    String artist,
-    String mbid,
-    String user,
+  Future<List<Tag>?> getTags({
+    String? artist,
+    String? mbid,
+    String? user,
     bool autoCorrect = false,
   }) async {
     if (artist == null && mbid == null) {
@@ -175,7 +177,7 @@ class ArtistMethods {
       'artist': artist,
       'mbid': mbid,
       'user': user,
-      'autocorrect': (autoCorrect ? 1 : 0),
+      'autocorrect': autoCorrect ? 1 : 0,
     };
 
     final request =
@@ -187,15 +189,16 @@ class ArtistMethods {
 
     return tags == null
         ? null
-        : List.generate((tags as List).length, (i) => Tag.fromJson(tags[i]));
+        : List.generate((tags as List).length,
+            (i) => Tag.fromJson(tags[i] as Map<String, dynamic>));
   }
 
   /// Get the top albums for an artist on Last.fm, ordered by popularity.
   ///
   /// https://www.last.fm/api/show/artist.getTopAlbums
-  Future<List<Album>> getTopAlbums({
-    String artist,
-    String mbid,
+  Future<List<Album>?> getTopAlbums({
+    String? artist,
+    String? mbid,
     int page = 1,
     int limit = 50,
   }) async {
@@ -220,16 +223,16 @@ class ArtistMethods {
 
     return topAlbums == null
         ? null
-        : List.generate(
-            (topAlbums as List).length, (i) => Album.fromJson(topAlbums[i]));
+        : List.generate((topAlbums as List).length,
+            (i) => Album.fromJson(topAlbums[i] as Map<String, dynamic>));
   }
 
   /// Get the top tags for an artist on Last.fm, ordered by popularity.
   ///
   /// https://www.last.fm/api/show/artist.getTopTags
-  Future<List<Tag>> getTopTags({
-    String artist,
-    String mbid,
+  Future<List<Tag>?> getTopTags({
+    String? artist,
+    String? mbid,
     bool autoCorrect = false,
   }) async {
     if (artist == null && mbid == null) {
@@ -239,7 +242,7 @@ class ArtistMethods {
     final parameters = {
       'artist': artist,
       'mbid': mbid,
-      'autocorrect': (autoCorrect ? 1 : 0),
+      'autocorrect': autoCorrect ? 1 : 0,
     };
 
     final request =
@@ -251,16 +254,16 @@ class ArtistMethods {
 
     return topTags == null
         ? null
-        : List.generate(
-            (topTags as List).length, (i) => Tag.fromJson(topTags[i]));
+        : List.generate((topTags as List).length,
+            (i) => Tag.fromJson(topTags[i] as Map<String, dynamic>));
   }
 
   /// Get the top tracks by an artist on Last.fm, ordered by popularity.
   ///
   /// https://www.last.fm/api/show/artist.getTopTracks
-  Future<List<Track>> getTopTracks({
-    String artist,
-    String mbid,
+  Future<List<Track>?> getTopTracks({
+    String? artist,
+    String? mbid,
     int page = 1,
     int limit = 50,
     bool autoCorrect = false,
@@ -275,7 +278,7 @@ class ArtistMethods {
       'mbid': mbid,
       'page': page,
       'limit': limit,
-      'autocorrect': (autoCorrect ? 1 : 0),
+      'autocorrect': autoCorrect ? 1 : 0,
     };
 
     final request = Request(
@@ -287,16 +290,16 @@ class ArtistMethods {
 
     return topTracks == null
         ? null
-        : List.generate(
-            (topTracks as List).length, (i) => Track.fromJson(topTracks[i]));
+        : List.generate((topTracks as List).length,
+            (i) => Track.fromJson(topTracks[i] as Map<String, dynamic>));
   }
 
   /// Remove a user's tag from an artist.
   ///
   /// https://www.last.fm/api/show/artist.removeTag
   Future<bool> removeTag({
-    @required String artist,
-    @required String tag,
+    required String artist,
+    required String tag,
   }) async {
     if (!_api.isAuth) {
       return Future.error(ScrobblenautException(
@@ -312,8 +315,8 @@ class ArtistMethods {
         Request(api: _api, method: 'artist.removeTag', parameters: parameters)
           ..signRequest();
 
-    final response =
-        PostResponseHelper.parse(await request.send(mode: RequestMode.POST));
+    final response = PostResponseHelper.parse(
+        await request.send(mode: RequestMode.POST) as String);
 
     if (response.status) {
       return true;
@@ -326,7 +329,7 @@ class ArtistMethods {
   ///
   /// https://www.last.fm/api/show/artist.search.
   Future<ArtistSearchResults> search({
-    @required String artist,
+    required String artist,
     int page = 1,
     int limit = 30,
   }) async {
@@ -341,6 +344,7 @@ class ArtistMethods {
 
     final response = await request.send(mode: RequestMode.GET);
 
-    return ArtistSearchResults.fromJson(response['results']);
+    return ArtistSearchResults.fromJson(
+        response['results'] as Map<String, dynamic>);
   }
 }

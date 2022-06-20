@@ -7,7 +7,6 @@
 library lastfm_objects;
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:meta/meta.dart';
 import 'package:scrobblenaut/src/helpers/lastfm_value_normalizer.dart';
 
 part 'lastfm.g.dart';

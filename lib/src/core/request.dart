@@ -3,28 +3,22 @@
 //                  Copyright (c) 2020 Nebulino                 //
 //                                                              //
 
-import 'package:meta/meta.dart';
 import 'package:scrobblenaut/src/core/lastfm.dart';
 import 'package:scrobblenaut/src/core/request_mode.dart';
 import 'package:scrobblenaut/src/helpers/utils.dart';
 
 /// It's creates a request object for the method.
 class Request {
-  LastFM _api;
-  Map<String, dynamic> _parameters;
+  final LastFM _api;
+  final Map<String, dynamic> _parameters;
 
   Request({
-    @required LastFM api,
-    @required String method,
-    Map<String, dynamic> parameters,
-  }) {
-    parameters ?? {};
-
-    _api = api;
-
-    _parameters = {};
-
-    parameters?.forEach((key, value) {
+    required LastFM api,
+    required String method,
+    Map<String, dynamic>? parameters,
+  })  : _api = api,
+        _parameters = <String, dynamic>{} {
+    parameters?.forEach((String key, dynamic value) {
       if (value != null) {
         _parameters[key] = formatUnicode(text: value);
       }
@@ -33,10 +27,8 @@ class Request {
     _parameters['api_key'] = _api.apiKey;
     _parameters['method'] = method;
 
-    if (_api.sessionKey != null) {
-      _parameters['sk'] = _api.sessionKey;
-      signRequest();
-    }
+    _parameters['sk'] = _api.sessionKey;
+    signRequest();
   }
 
   /// It signs the [Request].
@@ -48,12 +40,12 @@ class Request {
 
   /// It generates a signature.
   String _getSignature() {
-    var signature = '';
-    var sortedKeys = _parameters.keys.toList()..sort();
+    String signature = '';
+    final List<String> sortedKeys = _parameters.keys.toList()..sort();
 
-    for (var key in sortedKeys) {
+    for (final String key in sortedKeys) {
       signature += key;
-      signature += _parameters[key];
+      signature += _parameters[key] as String;
     }
 
     signature += _api.apiSecret;
@@ -62,7 +54,7 @@ class Request {
   }
 
   /// It sends the request to the API.
-  Future<dynamic> send({@required RequestMode mode}) async {
+  Future<dynamic> send({required RequestMode mode}) async {
     switch (mode) {
       case RequestMode.GET:
         return await _api.client.get(parameters: _parameters);

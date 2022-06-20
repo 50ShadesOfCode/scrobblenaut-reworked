@@ -12,8 +12,8 @@ import 'package:meta/meta.dart';
 
 /// Generate a MD5 string by a given value.
 String generateMD5(String value) {
-  var content = Utf8Encoder().convert(value);
-  var digest = md5.convert(content);
+  final content = const Utf8Encoder().convert(value);
+  final digest = md5.convert(content);
   return hex.encode(digest.bytes);
 }
 

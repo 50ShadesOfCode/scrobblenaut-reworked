@@ -22,7 +22,7 @@ extension TaggingTypeExtension on TaggingType {
       case TaggingType.track:
         return 'track';
       default:
-        return null;
+        return '';
     }
   }
 }

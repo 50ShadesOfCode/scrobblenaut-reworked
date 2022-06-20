@@ -3,7 +3,6 @@
 //                  Copyright (c) 2020 Nebulino                 //
 //                                                              //
 
-import 'package:meta/meta.dart';
 import 'package:scrobblenaut/lastfm.dart';
 import 'package:scrobblenaut/src/core/lastfm.dart';
 import 'package:scrobblenaut/src/core/request.dart';
@@ -19,10 +18,10 @@ class LibraryMethods {
   /// and tag counts.
   ///
   /// https://www.last.fm/api/show/library.getArtists
-  Future<List<Artist>> getArtists({
-    @required String user,
+  Future<List<Artist>?> getArtists({
+    required String user,
     int limit = 50,
-    int page,
+    int? page,
   }) async {
     final parameters = {
       'user': user,
@@ -39,7 +38,7 @@ class LibraryMethods {
 
     return artists == null
         ? null
-        : List.generate(
-            (artists as List).length, (i) => Artist.fromJson(artists[i]));
+        : List.generate((artists as List).length,
+            (i) => Artist.fromJson(artists[i] as Map<String, dynamic>));
   }
 }

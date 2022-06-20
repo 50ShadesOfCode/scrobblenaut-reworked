@@ -10,26 +10,26 @@ part of lastfm_objects;
 class Chart {
   // TODO: What is this?
   @JsonKey(name: '#text')
-  String text;
+  String? text;
 
   /// The starting date of the chart.
   @JsonKey(
       name: 'from',
       fromJson: LastFMValueNormalizer.DateTimeFromUnixTime,
       toJson: LastFMValueNormalizer.DateTimeToUnixTime)
-  DateTime fromDate;
+  DateTime? fromDate;
 
   /// The ending date of the chart.
   @JsonKey(
       name: 'to',
       fromJson: LastFMValueNormalizer.DateTimeFromUnixTime,
       toJson: LastFMValueNormalizer.DateTimeToUnixTime)
-  DateTime toDate;
+  DateTime? toDate;
 
   Chart({
-    this.text,
-    this.fromDate,
-    this.toDate,
+    required this.text,
+    required this.fromDate,
+    required this.toDate,
   });
 
   factory Chart.fromJson(Map<String, dynamic> json) => _$ChartFromJson(json);

@@ -3,7 +3,6 @@
 //                  Copyright (c) 2020 Nebulino                 //
 //                                                              //
 
-import 'package:meta/meta.dart';
 import 'package:scrobblenaut/lastfm.dart';
 import 'package:scrobblenaut/lastfm_methods.dart';
 import 'package:scrobblenaut/scrobblenaut.dart';
@@ -13,13 +12,13 @@ extension UserExtension on User {
   UserMethods get _userMethods => Scrobblenaut.instance.user;
 
   /// [UserMethods.getFriends]
-  Future<List<User>> getFriends({
+  Future<List<User>?> getFriends({
     bool enableRecentTracks = false,
     int page = 1,
     int limit = 50,
   }) async {
     return await _userMethods.getFriends(
-      user: name,
+      user: name!,
       enableRecentTracks: enableRecentTracks,
       page: page,
       limit: limit,
@@ -34,12 +33,12 @@ extension UserExtension on User {
   }
 
   /// [UserMethods.getLovedTracks]
-  Future<List<Track>> getLovedTracks({
+  Future<List<Track>?> getLovedTracks({
     int page = 1,
     int limit = 50,
   }) async {
     return await _userMethods.getLovedTracks(
-      user: name,
+      user: name!,
       page: page,
       limit: limit,
     );
@@ -47,29 +46,29 @@ extension UserExtension on User {
 
   /// [UserMethods.getPersonalTags]
   Future<Taggings> getPersonalTags({
-    @required String tag,
-    @required TaggingType taggingType,
+    required String tag,
+    required TaggingType taggingType,
     int page = 1,
     int limit = 50,
   }) async {
     return await _userMethods.getPersonalTags(
-      user: name,
+      user: name!,
       tag: tag,
       taggingType: taggingType,
     );
   }
 
   /// [UserMethods.getRecentTracks]
-  Future<List<Track>> getRecentTracks({
+  Future<List<Track>?> getRecentTracks({
     int page = 1,
     int limit = 50, // MAX 200
-    DateTime fromDate,
-    DateTime toDate,
+    required DateTime fromDate,
+    required DateTime toDate,
     bool extended = false,
     bool nowPlaying = false,
   }) async {
     return await _userMethods.getRecentTracks(
-      user: name,
+      user: name!,
       page: page,
       limit: limit,
       fromDate: fromDate,
@@ -80,13 +79,13 @@ extension UserExtension on User {
   }
 
   /// [UserMethods.getTopAlbums]
-  Future<List<Album>> getTopAlbums({
-    Period period,
+  Future<List<Album>?> getTopAlbums({
+    required Period period,
     int page = 1,
     int limit = 50,
   }) async {
     return await _userMethods.getTopAlbums(
-      user: name,
+      user: name!,
       period: period,
       page: page,
       limit: limit,
@@ -94,13 +93,13 @@ extension UserExtension on User {
   }
 
   /// [UserMethods.getTopArtists]
-  Future<List<Artist>> getTopArtists({
-    Period period,
+  Future<List<Artist>?> getTopArtists({
+    required Period period,
     int page = 1,
     int limit = 50,
   }) async {
     return await _userMethods.getTopArtists(
-      user: name,
+      user: name!,
       period: period,
       page: page,
       limit: limit,
@@ -108,23 +107,23 @@ extension UserExtension on User {
   }
 
   /// [UserMethods.getTopTags]
-  Future<List<Tag>> getTopTags({
-    int limit,
+  Future<List<Tag>?> getTopTags({
+    required int limit,
   }) async {
     return await _userMethods.getTopTags(
-      user: name,
+      user: name!,
       limit: limit,
     );
   }
 
   /// [UserMethods.getTopTracks]
-  Future<List<Track>> getTopTracks({
-    Period period,
+  Future<List<Track>?> getTopTracks({
+    required Period period,
     int page = 1,
     int limit = 50,
   }) async {
     return await _userMethods.getTopTracks(
-      user: name,
+      user: name!,
       period: period,
       page: page,
       limit: limit,
@@ -132,43 +131,43 @@ extension UserExtension on User {
   }
 
   /// [UserMethods.getWeeklyAlbumChart]
-  Future<List<Album>> getWeeklyAlbumChart({
-    DateTime fromDate,
-    DateTime toDate,
+  Future<List<Album>?> getWeeklyAlbumChart({
+    required DateTime fromDate,
+    required DateTime toDate,
   }) async {
     return await _userMethods.getWeeklyAlbumChart(
-      user: name,
+      user: name!,
       fromDate: fromDate,
       toDate: toDate,
     );
   }
 
   /// [UserMethods.]
-  Future<List<Artist>> getWeeklyArtistChart({
-    DateTime fromDate,
-    DateTime toDate,
+  Future<List<Artist>?> getWeeklyArtistChart({
+    required DateTime fromDate,
+    required DateTime toDate,
   }) async {
     return await _userMethods.getWeeklyArtistChart(
-      user: name,
+      user: name!,
       fromDate: fromDate,
       toDate: toDate,
     );
   }
 
   /// [UserMethods.]
-  Future<List<Chart>> getWeeklyChartList() async {
+  Future<List<Chart>?> getWeeklyChartList() async {
     return await _userMethods.getWeeklyChartList(
-      user: name,
+      user: name!,
     );
   }
 
   /// [UserMethods.]
-  Future<List<Track>> getWeeklyTrackChart({
-    DateTime fromDate,
-    DateTime toDate,
+  Future<List<Track>?> getWeeklyTrackChart({
+    required DateTime fromDate,
+    required DateTime toDate,
   }) async {
     return await _userMethods.getWeeklyTrackChart(
-      user: name,
+      user: name!,
       fromDate: fromDate,
       toDate: toDate,
     );

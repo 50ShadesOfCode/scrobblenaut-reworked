@@ -31,7 +31,7 @@ extension PeriodExtension on Period {
       case Period.OVERALL:
         return 'overall';
       default:
-        return null;
+        return '';
     }
   }
 }

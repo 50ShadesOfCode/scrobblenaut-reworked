@@ -10,35 +10,35 @@ part of lastfm_objects;
 class Tag {
   /// The tag name.
   @JsonKey(name: 'name')
-  String name;
+  String? name;
 
   // LastFM url of the tag.
   @JsonKey(name: 'url')
-  String url;
+  String? url;
 
   /// The usage number of the tag.
   @JsonKey(name: 'count', fromJson: LastFMValueNormalizer.NumberToInt)
-  int count;
+  int? count;
 
   /// The total number of usage of this tag from a user.
   @JsonKey(name: 'total', fromJson: LastFMValueNormalizer.NumberToInt)
-  int total;
+  int? total;
 
   /// The total number of usage of this tag.
   @JsonKey(name: 'reach', fromJson: LastFMValueNormalizer.NumberToInt)
-  int reach;
+  int? reach;
 
   /// The number of usage applied from a user.
   @JsonKey(name: 'taggings', fromJson: LastFMValueNormalizer.NumberToInt)
-  int taggings;
+  int? taggings;
 
   /// If True, this tag can be used as a Radio Station.
   @JsonKey(name: 'streamable', fromJson: LastFMValueNormalizer.NumberToBool)
-  bool streamable;
+  bool? streamable;
 
   /// The wiki of the tag.
   @JsonKey(name: 'wiki')
-  Wiki wiki;
+  Wiki? wiki;
 
   Tag({
     this.name,

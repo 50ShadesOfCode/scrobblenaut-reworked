@@ -16,58 +16,58 @@ extension TagExtension on Tag {
     Language language = Language.en,
   }) async {
     return await _tagMethods.getInfo(
-      tag: name,
+      tag: name!,
       language: language,
     );
   }
 
   /// [TagMethods.getSimilar]
-  Future<List<Tag>> getSimilar() async {
+  Future<List<Tag>?> getSimilar() async {
     return await _tagMethods.getSimilar(
-      tag: name,
+      tag: name!,
     );
   }
 
   /// [TagMethods.getTopAlbums]
-  Future<List<Album>> getTopAlbums({
+  Future<List<Album>?> getTopAlbums({
     int page = 1,
     int limit = 50,
   }) async {
     return await _tagMethods.getTopAlbums(
-      tag: name,
+      tag: name!,
       page: page,
       limit: limit,
     );
   }
 
   /// [TagMethods.getTopArtists]
-  Future<List<Artist>> getTopArtists({
+  Future<List<Artist>?> getTopArtists({
     int page = 1,
     int limit = 50,
   }) async {
     return await _tagMethods.getTopArtists(
-      tag: name,
+      tag: name!,
       page: page,
       limit: limit,
     );
   }
 
   /// [TagMethods.getTopTracks]
-  Future<List<Track>> getTopTracks({
+  Future<List<Track>?> getTopTracks({
     int page = 1,
     int limit = 50,
   }) async {
     return await _tagMethods.getTopTracks(
-      tag: name,
+      tag: name!,
       page: page,
       limit: limit,
     );
   }
 
   /// [TagMethods.getWeeklyChartList]
-  Future<List<Chart>> getWeeklyChartList() async {
+  Future<List<Chart>?> getWeeklyChartList() async {
     return await _tagMethods.getWeeklyChartList(
-      tag: name,
+      tag: name!,
     );
   }
 }

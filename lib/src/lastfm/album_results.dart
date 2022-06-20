@@ -32,10 +32,10 @@ class AlbumSearchResults {
   int itemsPerPage;
 
   AlbumSearchResults({
-    this.albums,
-    this.totalResults,
-    this.statingIndex,
-    this.itemsPerPage,
+    required this.albums,
+    required this.totalResults,
+    required this.statingIndex,
+    required this.itemsPerPage,
   });
 
   factory AlbumSearchResults.fromJson(Map<String, dynamic> json) =>

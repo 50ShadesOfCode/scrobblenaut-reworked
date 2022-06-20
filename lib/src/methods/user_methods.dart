@@ -3,7 +3,6 @@
 //                  Copyright (c) 2020 Nebulino                 //
 //                                                              //
 
-import 'package:meta/meta.dart';
 import 'package:scrobblenaut/lastfm.dart';
 import 'package:scrobblenaut/scrobblenaut.dart';
 import 'package:scrobblenaut/scrobblenaut_exceptions.dart';
@@ -22,15 +21,15 @@ class UserMethods {
   /// Get a list of the user's friends on Last.fm.
   ///
   /// https://www.last.fm/api/show/user.getFriends
-  Future<List<User>> getFriends({
-    @required String user,
+  Future<List<User>?> getFriends({
+    required String user,
     bool enableRecentTracks = false,
     int page = 1,
     int limit = 50,
   }) async {
     final parameters = {
       'user': user,
-      'recenttracks': (enableRecentTracks ? 1 : 0),
+      'recenttracks': enableRecentTracks ? 1 : 0,
       'page': page,
       'limit': limit,
     };
@@ -44,15 +43,15 @@ class UserMethods {
 
     return friends == null
         ? null
-        : List.generate(
-            (friends as List).length, (i) => User.fromJson(friends[i]));
+        : List.generate((friends as List).length,
+            (i) => User.fromJson(friends[i] as Map<String, dynamic>));
   }
 
   /// Get information about a user profile.
   ///
   /// https://www.last.fm/api/show/user.getInfo
   Future<User> getInfo({
-    String user,
+    String? user,
   }) async {
     final parameters = {
       'user': user,
@@ -63,14 +62,14 @@ class UserMethods {
 
     final response = await request.send(mode: RequestMode.GET);
 
-    return User.fromJson(response['user']);
+    return User.fromJson(response['user'] as Map<String, dynamic>);
   }
 
   /// Get the last 50 tracks loved by a user.
   ///
   /// https://www.last.fm/api/show/user.getLovedTracks
-  Future<List<Track>> getLovedTracks({
-    @required String user,
+  Future<List<Track>?> getLovedTracks({
+    required String user,
     int page = 1,
     int limit = 50,
   }) async {
@@ -90,23 +89,23 @@ class UserMethods {
     return lovedTracks == null
         ? null
         : List.generate((lovedTracks as List).length,
-            (i) => Track.fromJson(lovedTracks[i]));
+            (i) => Track.fromJson(lovedTracks[i] as Map<String, dynamic>));
   }
 
   /// Get the user's personal tags.
   ///
   /// https://www.last.fm/api/show/user.getPersonalTags
   Future<Taggings> getPersonalTags({
-    @required String user,
-    @required String tag,
-    @required TaggingType taggingType,
+    required String user,
+    required String tag,
+    required TaggingType taggingType,
     int page = 1,
     int limit = 50,
   }) async {
     final parameters = {
       'user': user,
       'tag': tag,
-      'taggingtype': taggingType?.type,
+      'taggingtype': taggingType.type,
       'page': page,
       'limit': limit,
     };
@@ -118,7 +117,7 @@ class UserMethods {
 
     final response = await request.send(mode: RequestMode.GET);
 
-    var taggings = Taggings()
+    final taggings = Taggings()
       ..albums = <Album>[]
       ..artists = <Artist>[]
       ..tracks = <Track>[];
@@ -128,7 +127,7 @@ class UserMethods {
 
       if (taggedAlbum != null) {
         taggings.albums = List.generate((taggedAlbum as List).length,
-            (i) => Album.fromJson(taggedAlbum[i]));
+            (i) => Album.fromJson(taggedAlbum[i] as Map<String, dynamic>));
       }
     }
 
@@ -137,7 +136,7 @@ class UserMethods {
 
       if (taggedArtists != null) {
         taggings.artists = List.generate((taggedArtists as List).length,
-            (i) => Artist.fromJson(taggedArtists[i]));
+            (i) => Artist.fromJson(taggedArtists[i] as Map<String, dynamic>));
       }
     }
 
@@ -146,7 +145,7 @@ class UserMethods {
 
       if (taggedTracks != null) {
         taggings.tracks = List.generate((taggedTracks as List).length,
-            (i) => Track.fromJson(taggedTracks[i]));
+            (i) => Track.fromJson(taggedTracks[i] as Map<String, dynamic>));
       }
     }
 
@@ -160,12 +159,12 @@ class UserMethods {
   /// **NOTE:** the output list is already ordered by last listened first.
   ///
   /// https://www.last.fm/api/show/user.getRecentTracks
-  Future<List<Track>> getRecentTracks({
-    @required String user,
+  Future<List<Track>?> getRecentTracks({
+    required String user,
     int page = 1,
     int limit = 50, // MAX 200
-    DateTime fromDate,
-    DateTime toDate,
+    DateTime? fromDate,
+    DateTime? toDate,
     bool extended = false,
     bool nowPlaying = false,
   }) async {
@@ -178,10 +177,10 @@ class UserMethods {
       'user': user,
       'page': page,
       'limit': limit,
-      'from': LastFMValueNormalizer.DateTimeToUnixTime(fromDate),
-      'to': LastFMValueNormalizer.DateTimeToUnixTime(toDate),
-      'extended': (extended ? 1 : 0),
-      'nowplaying': (nowPlaying ? 1 : 0),
+      'from': LastFMValueNormalizer.DateTimeToUnixTime(fromDate!),
+      'to': LastFMValueNormalizer.DateTimeToUnixTime(toDate!),
+      'extended': extended ? 1 : 0,
+      'nowplaying': nowPlaying ? 1 : 0,
     };
 
     final request = Request(
@@ -204,8 +203,8 @@ class UserMethods {
                 : null; // If there's no #text field, don't touch the artist.
       });
 
-      return List.generate((recentTracks as List).length,
-          (i) => Track.fromJson(recentTracks[i]));
+      return List.generate(recentTracks.length,
+          (i) => Track.fromJson(recentTracks[i] as Map<String, dynamic>));
     }
   }
 
@@ -215,9 +214,9 @@ class UserMethods {
   /// **NOTE:** the output list is already ordered by rank.
   ///
   /// https://www.last.fm/api/show/user.getTopAlbums
-  Future<List<Album>> getTopAlbums({
-    @required String user,
-    Period period,
+  Future<List<Album>?> getTopAlbums({
+    required String user,
+    Period? period,
     int page = 1,
     int limit = 50,
   }) async {
@@ -237,8 +236,8 @@ class UserMethods {
 
     return topAlbums == null
         ? null
-        : List.generate(
-            (topAlbums as List).length, (i) => Album.fromJson(topAlbums[i]));
+        : List.generate((topAlbums as List).length,
+            (i) => Album.fromJson(topAlbums[i] as Map<String, dynamic>));
   }
 
   /// Get the top artists listened to by a user.
@@ -248,9 +247,9 @@ class UserMethods {
   /// **NOTE:** the output list is already ordered by rank.
   ///
   /// https://www.last.fm/api/show/user.getTopArtists
-  Future<List<Artist>> getTopArtists({
-    @required String user,
-    Period period,
+  Future<List<Artist>?> getTopArtists({
+    required String user,
+    Period? period,
     int page = 1,
     int limit = 50,
   }) async {
@@ -270,8 +269,8 @@ class UserMethods {
 
     return topArtist == null
         ? null
-        : List.generate(
-            (topArtist as List).length, (i) => Artist.fromJson(topArtist[i]));
+        : List.generate((topArtist as List).length,
+            (i) => Artist.fromJson(topArtist[i] as Map<String, dynamic>));
   }
 
   /// Get the top tags used by this user.
@@ -279,9 +278,9 @@ class UserMethods {
   /// **NOTE:** the output list is already ordered by rank.
   ///
   /// https://www.last.fm/api/show/user.getTopTags
-  Future<List<Tag>> getTopTags({
-    @required String user,
-    int limit,
+  Future<List<Tag>?> getTopTags({
+    required String user,
+    int? limit,
   }) async {
     final parameters = {
       'user': user,
@@ -297,8 +296,8 @@ class UserMethods {
 
     return topTags == null
         ? null
-        : List.generate(
-            (topTags as List).length, (i) => Tag.fromJson(topTags[i]));
+        : List.generate((topTags as List).length,
+            (i) => Tag.fromJson(topTags[i] as Map<String, dynamic>));
   }
 
   /// Get the top tracks listened to by a user.
@@ -309,8 +308,8 @@ class UserMethods {
   ///
   /// https://www.last.fm/api/show/user.getTopTracks
   Future<List<Track>> getTopTracks({
-    @required String user,
-    Period period,
+    required String user,
+    Period? period,
     int page = 1,
     int limit = 50,
   }) async {
@@ -334,11 +333,11 @@ class UserMethods {
       return [];
     } else {
       // This operation is necessary because the tracks have different duration.
-      var fixTopTracks = List.generate(
-          (topTracks as List).length, (i) => Track.fromJson(topTracks[i]));
+      final fixTopTracks = List.generate((topTracks as List).length,
+          (i) => Track.fromJson(topTracks[i] as Map<String, dynamic>));
 
       fixTopTracks.forEach((Track track) {
-        track.duration = track.duration * 1000;
+        track.duration = track.duration! * 1000;
       });
       return fixTopTracks;
     }
@@ -351,15 +350,15 @@ class UserMethods {
   /// **NOTE:** the output list is already ordered by rank.
   ///
   /// https://www.last.fm/api/show/user.getWeeklyAlbumChart
-  Future<List<Album>> getWeeklyAlbumChart({
-    @required String user,
-    DateTime fromDate,
-    DateTime toDate,
+  Future<List<Album>?> getWeeklyAlbumChart({
+    required String user,
+    DateTime? fromDate,
+    DateTime? toDate,
   }) async {
     final parameters = {
       'user': user,
-      'from': LastFMValueNormalizer.DateTimeToUnixTime(fromDate),
-      'to': LastFMValueNormalizer.DateTimeToUnixTime(toDate),
+      'from': LastFMValueNormalizer.DateTimeToUnixTime(fromDate!),
+      'to': LastFMValueNormalizer.DateTimeToUnixTime(toDate!),
     };
 
     // TODO: is the rank necessary!?
@@ -374,7 +373,7 @@ class UserMethods {
     return weeklyAlbumChart == null
         ? null
         : List.generate((weeklyAlbumChart as List).length,
-            (i) => Album.fromJson(weeklyAlbumChart[i]));
+            (i) => Album.fromJson(weeklyAlbumChart[i] as Map<String, dynamic>));
   }
 
   /// Get an artist chart for a user profile, for a given date range.
@@ -384,15 +383,15 @@ class UserMethods {
   /// **NOTE:** the output list is already ordered by rank.
   ///
   /// https://www.last.fm/api/show/user.getWeeklyArtistChart
-  Future<List<Artist>> getWeeklyArtistChart({
-    @required String user,
-    DateTime fromDate,
-    DateTime toDate,
+  Future<List<Artist>?> getWeeklyArtistChart({
+    required String user,
+    DateTime? fromDate,
+    DateTime? toDate,
   }) async {
     final parameters = {
       'user': user,
-      'from': LastFMValueNormalizer.DateTimeToUnixTime(fromDate),
-      'to': LastFMValueNormalizer.DateTimeToUnixTime(toDate),
+      'from': LastFMValueNormalizer.DateTimeToUnixTime(fromDate!),
+      'to': LastFMValueNormalizer.DateTimeToUnixTime(toDate!),
     };
 
     // TODO: is the rank necessary!?
@@ -406,16 +405,18 @@ class UserMethods {
 
     return weeklyArtistChart == null
         ? null
-        : List.generate((weeklyArtistChart as List).length,
-            (i) => Artist.fromJson(weeklyArtistChart[i]));
+        : List.generate(
+            (weeklyArtistChart as List).length,
+            (i) =>
+                Artist.fromJson(weeklyArtistChart[i] as Map<String, dynamic>));
   }
 
   /// Get a list of available charts for this user,
   /// expressed as date ranges which can be sent to the chart services.
   ///
   /// https://www.last.fm/api/show/user.getWeeklyChartList
-  Future<List<Chart>> getWeeklyChartList({
-    @required String user,
+  Future<List<Chart>?> getWeeklyChartList({
+    required String user,
   }) async {
     final parameters = {
       'user': user,
@@ -431,7 +432,7 @@ class UserMethods {
     return weeklyChartList == null
         ? null
         : List.generate((weeklyChartList as List).length,
-            (i) => Chart.fromJson(weeklyChartList[i]));
+            (i) => Chart.fromJson(weeklyChartList[i] as Map<String, dynamic>));
   }
 
   /// Get a track chart for a user profile, for a given date range.
@@ -441,15 +442,15 @@ class UserMethods {
   /// **NOTE:** the output list is already ordered by rank.
   ///
   /// https://www.last.fm/api/show/user.getWeeklyTrackChart
-  Future<List<Track>> getWeeklyTrackChart({
-    @required String user,
-    DateTime fromDate,
-    DateTime toDate,
+  Future<List<Track>?> getWeeklyTrackChart({
+    required String user,
+    DateTime? fromDate,
+    DateTime? toDate,
   }) async {
     final parameters = {
       'user': user,
-      'from': LastFMValueNormalizer.DateTimeToUnixTime(fromDate),
-      'to': LastFMValueNormalizer.DateTimeToUnixTime(toDate),
+      'from': LastFMValueNormalizer.DateTimeToUnixTime(fromDate!),
+      'to': LastFMValueNormalizer.DateTimeToUnixTime(toDate!),
     };
 
     // TODO: is the rank necessary!?
@@ -464,6 +465,6 @@ class UserMethods {
     return weeklyTrackChart == null
         ? null
         : List.generate((weeklyTrackChart as List).length,
-            (i) => Track.fromJson(weeklyTrackChart[i]));
+            (i) => Track.fromJson(weeklyTrackChart[i] as Map<String, dynamic>));
   }
 }

@@ -3,7 +3,6 @@
 //                  Copyright (c) 2020 Nebulino                 //
 //                                                              //
 
-import 'package:meta/meta.dart';
 import 'package:scrobblenaut/lastfm.dart';
 import 'package:scrobblenaut/src/core/lastfm.dart';
 import 'package:scrobblenaut/src/core/request.dart';
@@ -18,8 +17,8 @@ class GeoMethods {
   /// Get the most popular artists on Last.fm by country.
   ///
   /// https://www.last.fm/api/show/geo.getTopArtists
-  Future<List<Artist>> getTopArtists({
-    @required String country,
+  Future<List<Artist>?> getTopArtists({
+    required String country,
     int page = 1,
     int limit = 50,
   }) async {
@@ -38,16 +37,16 @@ class GeoMethods {
 
     return topArtists == null
         ? null
-        : List.generate(
-            (topArtists as List).length, (i) => Artist.fromJson(topArtists[i]));
+        : List.generate((topArtists as List).length,
+            (i) => Artist.fromJson(topArtists[i] as Map<String, dynamic>));
   }
 
   /// Get the most popular tracks on Last.fm last week by country.
   ///
   /// https://www.last.fm/api/show/geo.getTopTracks
   Future<List<Track>> getTopTracks({
-    @required String country,
-    String location,
+    required String country,
+    String? location,
     int page = 1,
     int limit = 50,
   }) async {
@@ -69,11 +68,11 @@ class GeoMethods {
       return [];
     } else {
       // This operation is necessary because the tracks have different duration.
-      var fixTopTracks = List.generate(
-          (topTracks as List).length, (i) => Track.fromJson(topTracks[i]));
+      final fixTopTracks = List.generate((topTracks as List).length,
+          (i) => Track.fromJson(topTracks[i] as Map<String, dynamic>));
 
       fixTopTracks.forEach((Track track) {
-        track.duration = track.duration * 1000;
+        track.duration = track.duration! * 1000;
       });
       return fixTopTracks;
     }

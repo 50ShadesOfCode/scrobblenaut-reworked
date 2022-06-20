@@ -3,7 +3,6 @@
 //                  Copyright (c) 2020 Nebulino                 //
 //                                                              //
 
-import 'package:meta/meta.dart';
 import 'package:scrobblenaut/lastfm.dart';
 import 'package:scrobblenaut/scrobblenaut_exceptions.dart';
 import 'package:scrobblenaut/src/core/lastfm.dart';
@@ -25,9 +24,9 @@ class TrackMethods {
   ///
   /// https://www.last.fm/api/show/track.addTags
   Future<bool> addTags({
-    @required String track,
-    @required String artist,
-    @required List<String> tags,
+    required String track,
+    required String artist,
+    required List<String> tags,
   }) async {
     if (!_api.isAuth) {
       return Future.error(ScrobblenautException(
@@ -49,8 +48,8 @@ class TrackMethods {
         Request(api: _api, method: 'track.addTags', parameters: parameters)
           ..signRequest();
 
-    final response =
-        PostResponseHelper.parse(await request.send(mode: RequestMode.POST));
+    final response = PostResponseHelper.parse(
+        await request.send(mode: RequestMode.POST) as String);
 
     if (response.status) {
       return true;
@@ -64,8 +63,8 @@ class TrackMethods {
   ///
   /// https://www.last.fm/api/show/artist.getCorrection
   Future<List<Track>> getCorrection({
-    @required String track,
-    @required String artist,
+    required String track,
+    required String artist,
   }) async {
     final parameters = {
       'track': track,
@@ -82,12 +81,14 @@ class TrackMethods {
     if (corrections is List) {
       return List.generate(
           corrections.length,
-          (i) => Track.fromJson(
-              response['corrections']['correction']['track'][i]));
+          (i) => Track.fromJson(response['corrections']['correction']['track']
+              [i] as Map<String, dynamic>));
     }
 
     // A list of a single correction.
-    return [Track.fromJson(corrections['correction']['track'])];
+    return [
+      Track.fromJson(corrections['correction']['track'] as Map<String, dynamic>)
+    ];
   }
 
   /// Get the metadata for a track on Last.fm
@@ -95,10 +96,10 @@ class TrackMethods {
   ///
   /// https://www.last.fm/api/show/track.getInfo
   Future<Track> getInfo({
-    String track,
-    String artist,
-    String mbid,
-    String username,
+    String? track,
+    String? artist,
+    String? mbid,
+    String? username,
     bool autoCorrect = false,
   }) async {
     if ((track == null || artist == null) && mbid == null) {
@@ -112,24 +113,24 @@ class TrackMethods {
       'artist': artist,
       'mbid': mbid,
       'username': username,
-      'autocorrect': (autoCorrect ? 1 : 0),
+      'autocorrect': autoCorrect ? 1 : 0,
     };
 
     final request =
         Request(api: _api, method: 'track.getInfo', parameters: parameters);
 
-    return (Track.fromJson(
-        (await request.send(mode: RequestMode.GET))['track']));
+    return Track.fromJson((await request.send(mode: RequestMode.GET))['track']
+        as Map<String, dynamic>);
   }
 
   /// Get the similar tracks for this track on Last.fm, based on listening data.
   ///
   /// https://www.last.fm/api/show/track.getSimilar
-  Future<List<Track>> getSimilar({
-    String track,
-    String artist,
-    String mbid,
-    int limit,
+  Future<List<Track>?> getSimilar({
+    String? track,
+    String? artist,
+    String? mbid,
+    int? limit,
     bool autoCorrect = false,
   }) async {
     if ((track == null || artist == null) && mbid == null) {
@@ -143,7 +144,7 @@ class TrackMethods {
       'artist': artist,
       'mbid': mbid,
       'limit': limit,
-      'autocorrect': (autoCorrect ? 1 : 0),
+      'autocorrect': autoCorrect ? 1 : 0,
     };
 
     final request =
@@ -156,7 +157,7 @@ class TrackMethods {
     return similarTracks == null
         ? null
         : List.generate((similarTracks as List).length,
-            (i) => Track.fromJson(similarTracks[i]));
+            (i) => Track.fromJson(similarTracks[i] as Map<String, dynamic>));
   }
 
   /// Get the tags applied by an individual user to a track on Last.fm.
@@ -164,11 +165,11 @@ class TrackMethods {
   /// all users use track.getTopTags.
   ///
   /// https://www.last.fm/api/show/track.getTags
-  Future<List<Tag>> getTags({
-    String track,
-    String artist,
-    String mbid,
-    String user,
+  Future<List<Tag>?> getTags({
+    String? track,
+    String? artist,
+    String? mbid,
+    String? user,
     bool autoCorrect = false,
   }) async {
     if ((track == null || artist == null) && mbid == null) {
@@ -187,7 +188,7 @@ class TrackMethods {
       'artist': artist,
       'mbid': mbid,
       'user': user,
-      'autocorrect': (autoCorrect ? 1 : 0),
+      'autocorrect': autoCorrect ? 1 : 0,
     };
 
     final request =
@@ -205,18 +206,18 @@ class TrackMethods {
 
     return tags['tag'] == null
         ? null
-        : List.generate(
-            (tags['tag'] as List).length, (i) => Tag.fromJson(tags['tag'][i]));
+        : List.generate((tags['tag'] as List).length,
+            (i) => Tag.fromJson(tags['tag'][i] as Map<String, dynamic>));
   }
 
   /// Get the top tags for this track on Last.fm, ordered by tag count.
   /// Supply either track & artist name or mbid.
   ///
   /// https://www.last.fm/api/show/track.getTopTags
-  Future<List<Tag>> getTopTags({
-    String track,
-    String artist,
-    String mbid,
+  Future<List<Tag>?> getTopTags({
+    String? track,
+    String? artist,
+    String? mbid,
     bool autoCorrect = false,
   }) async {
     if ((track == null || artist == null) && mbid == null) {
@@ -229,7 +230,7 @@ class TrackMethods {
       'track': track,
       'artist': artist,
       'mbid': mbid,
-      'autocorrect': (autoCorrect ? 1 : 0),
+      'autocorrect': autoCorrect ? 1 : 0,
     };
 
     final request =
@@ -241,15 +242,16 @@ class TrackMethods {
 
     return tags == null
         ? null
-        : List.generate((tags as List).length, (i) => Tag.fromJson(tags[i]));
+        : List.generate((tags as List).length,
+            (i) => Tag.fromJson(tags[i] as Map<String, dynamic>));
   }
 
   /// Love a track for a user profile.
   ///
   /// https://www.last.fm/api/show/track.love
   Future<bool> love({
-    @required String track,
-    @required String artist,
+    required String track,
+    required String artist,
   }) async {
     if (!_api.isAuth) {
       return Future.error(ScrobblenautException(
@@ -265,8 +267,8 @@ class TrackMethods {
         Request(api: _api, method: 'track.love', parameters: parameters)
           ..signRequest();
 
-    final response =
-        PostResponseHelper.parse(await request.send(mode: RequestMode.POST));
+    final response = PostResponseHelper.parse(
+        await request.send(mode: RequestMode.POST) as String);
 
     if (response.status) {
       return true;
@@ -279,9 +281,9 @@ class TrackMethods {
   ///
   /// https://www.last.fm/api/show/track.removeTag
   Future<bool> removeTag({
-    @required String track,
-    @required String artist,
-    @required String tag,
+    required String track,
+    required String artist,
+    required String tag,
   }) async {
     if (!_api.isAuth) {
       return Future.error(ScrobblenautException(
@@ -298,8 +300,8 @@ class TrackMethods {
         Request(api: _api, method: 'track.removeTag', parameters: parameters)
           ..signRequest();
 
-    final response =
-        PostResponseHelper.parse(await request.send(mode: RequestMode.POST));
+    final response = PostResponseHelper.parse(
+        await request.send(mode: RequestMode.POST) as String);
 
     if (response.status) {
       return true;
@@ -325,16 +327,16 @@ class TrackMethods {
   /// unless they have been explicitly approved by the user.
   /// Parameter names are case sensitive.
   Future<ScrobbleResponse> scrobble({
-    @required String track,
-    String album,
-    @required String artist,
-    int trackNumber,
-    Duration duration,
-    DateTime timestamp,
-    String context,
-    String streamId,
+    required String track,
+    String? album,
+    required String artist,
+    int? trackNumber,
+    Duration? duration,
+    DateTime? timestamp,
+    String? context,
+    String? streamId,
     bool chosenByUser = false,
-    String mbid,
+    String? mbid,
   }) async {
     if (!_api.isAuth) {
       return Future.error(ScrobblenautException(
@@ -353,7 +355,7 @@ class TrackMethods {
           LastFMValueNormalizer.timestampToSecondsSinceEpoch(timestamp),
       'context': context,
       'streamId': streamId,
-      'chosenByUser': (chosenByUser ? 1 : 0),
+      'chosenByUser': chosenByUser ? 1 : 0,
       'mbid': mbid,
     };
 
@@ -361,14 +363,14 @@ class TrackMethods {
         Request(api: _api, method: 'track.scrobble', parameters: parameters)
           ..signRequest();
 
-    final response = (await request.send(mode: RequestMode.POST));
+    final response = await request.send(mode: RequestMode.POST);
 
-    return ScrobbleResponse.parse(response);
+    return ScrobbleResponse.parse(response as String);
   }
 
   /// See [TrackMethods.scrobble].
   Future<ScrobbleResponse> scrobbleFromObject(
-      {@required Scrobble scrobble}) async {
+      {required Scrobble scrobble}) async {
     if (!_api.isAuth) {
       return Future.error(ScrobblenautException(
           description: "You can't use this method unless you Authenticate."));
@@ -386,11 +388,11 @@ class TrackMethods {
               scrobble.timestamp),
       'context': scrobble.context,
       'streamId': scrobble.streamId,
-      'chosenByUser': (scrobble.chosenByUser == null
+      'chosenByUser': scrobble.chosenByUser == null
           ? null
-          : scrobble.chosenByUser
+          : scrobble.chosenByUser!
               ? 1
-              : 0),
+              : 0,
       'mbid': scrobble.mbid,
     };
 
@@ -398,14 +400,14 @@ class TrackMethods {
         Request(api: _api, method: 'track.scrobble', parameters: parameters)
           ..signRequest();
 
-    final response = (await request.send(mode: RequestMode.POST));
+    final response = await request.send(mode: RequestMode.POST);
 
-    return ScrobbleResponse.parse(response);
+    return ScrobbleResponse.parse(response as String);
   }
 
   /// See [TrackMethods.scrobble] and [Scrobble] for more information.
   Future<ScrobbleResponse> multiScrobble(
-      {@required List<Scrobble> scrobbleList}) async {
+      {required List<Scrobble> scrobbleList}) async {
     // TODO: make a queue for scrobbleList longer than 50?
 
     if (scrobbleList.length > 50) {
@@ -413,21 +415,21 @@ class TrackMethods {
           description: "You've supplied more than 50 scrobbles."));
     }
 
-    var parameters = <String, dynamic>{};
+    final parameters = <String, dynamic>{};
 
     var i = 1;
 
     scrobbleList.forEach((Scrobble scrobble) {
-      parameters['track[${i}]'] = scrobble.track;
-      parameters['album[${i}]'] = scrobble.album;
-      parameters['artist[${i}]'] = scrobble.artist;
-      parameters['trackNumber[${i}]'] = scrobble.trackNumber;
-      parameters['duration[${i}]'] = scrobble.duration;
-      parameters['timestamp[${i}]'] = scrobble.timestamp;
-      parameters['context[${i}]'] = scrobble.context;
-      parameters['streamId[${i}]'] = scrobble.streamId;
-      parameters['chosenByUser[${i}]'] = scrobble.chosenByUser;
-      parameters['mbid[${i}]'] = scrobble.mbid;
+      parameters['track[$i]'] = scrobble.track;
+      parameters['album[$i]'] = scrobble.album;
+      parameters['artist[$i]'] = scrobble.artist;
+      parameters['trackNumber[$i]'] = scrobble.trackNumber;
+      parameters['duration[$i]'] = scrobble.duration;
+      parameters['timestamp[$i]'] = scrobble.timestamp;
+      parameters['context[$i]'] = scrobble.context;
+      parameters['streamId[$i]'] = scrobble.streamId;
+      parameters['chosenByUser[$i]'] = scrobble.chosenByUser;
+      parameters['mbid[$i]'] = scrobble.mbid;
 
       i++;
     });
@@ -438,7 +440,7 @@ class TrackMethods {
 
     final response = await request.send(mode: RequestMode.POST);
 
-    return ScrobbleResponse.parse(response);
+    return ScrobbleResponse.parse(response as String);
   }
 
   /// Search for a track by track name.
@@ -446,8 +448,8 @@ class TrackMethods {
   ///
   /// https://www.last.fm/api/show/track.search
   Future<TrackSearchResults> search({
-    @required String track,
-    String artist,
+    required String track,
+    String? artist,
     int page = 1,
     int limit = 30,
   }) async {
@@ -463,15 +465,16 @@ class TrackMethods {
 
     final response = await request.send(mode: RequestMode.GET);
 
-    return TrackSearchResults.fromJson(response['results']);
+    return TrackSearchResults.fromJson(
+        response['results'] as Map<String, dynamic>);
   }
 
   /// UnLove a track for a user profile.
   ///
   /// https://www.last.fm/api/show/track.unlove
   Future<bool> unLove({
-    @required String track,
-    @required String artist,
+    required String track,
+    required String artist,
   }) async {
     if (!_api.isAuth) {
       return Future.error(ScrobblenautException(
@@ -487,8 +490,8 @@ class TrackMethods {
         Request(api: _api, method: 'track.unlove', parameters: parameters)
           ..signRequest();
 
-    final response =
-        PostResponseHelper.parse(await request.send(mode: RequestMode.POST));
+    final response = PostResponseHelper.parse(
+        await request.send(mode: RequestMode.POST) as String);
 
     if (response.status) {
       return true;
@@ -502,16 +505,16 @@ class TrackMethods {
   ///
   /// https://www.last.fm/api/show/track.updateNowPlaying
   Future<NowPlayedTrack> updateNowPlaying({
-    @required String track,
-    String album,
-    @required String artist,
-    int trackNumber,
-    Duration duration,
-    DateTime timestamp,
-    String context,
-    String streamId,
+    required String track,
+    String? album,
+    required String artist,
+    int? trackNumber,
+    Duration? duration,
+    DateTime? timestamp,
+    String? context,
+    String? streamId,
     bool chosenByUser = false,
-    String mbid,
+    String? mbid,
   }) async {
     if (!_api.isAuth) {
       return Future.error(ScrobblenautException(
@@ -525,10 +528,10 @@ class TrackMethods {
       'trackNumber': trackNumber,
       'duration': duration?.inSeconds,
       'timestamp':
-          LastFMValueNormalizer.timestampToSecondsSinceEpoch(timestamp),
+          LastFMValueNormalizer.timestampToSecondsSinceEpoch(timestamp!),
       'context': context,
       'streamId': streamId,
-      'chosenByUser': (chosenByUser ? 1 : 0),
+      'chosenByUser': chosenByUser ? 1 : 0,
       'mbid': mbid,
     };
 
@@ -536,14 +539,14 @@ class TrackMethods {
         api: _api, method: 'track.updateNowPlaying', parameters: parameters)
       ..signRequest();
 
-    final response = (await request.send(mode: RequestMode.POST));
+    final response = await request.send(mode: RequestMode.POST);
 
-    return NowPlayedTrack.parse(response);
+    return NowPlayedTrack.parse(response as String);
   }
 
   /// See [TrackMethods.updateNowPlaying].
   Future<NowPlayedTrack> updateNowPlayingFromObject(
-      {@required NowPlaying track}) async {
+      {required NowPlaying track}) async {
     if (!_api.isAuth) {
       return Future.error(ScrobblenautException(
           description: "You can't use this method unless you Authenticate."));
@@ -563,8 +566,8 @@ class TrackMethods {
         api: _api, method: 'track.updateNowPlaying', parameters: parameters)
       ..signRequest();
 
-    final response = (await request.send(mode: RequestMode.POST));
+    final response = await request.send(mode: RequestMode.POST);
 
-    return NowPlayedTrack.parse(response);
+    return NowPlayedTrack.parse(response as String);
   }
 }

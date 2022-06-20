@@ -37,7 +37,7 @@ class ScrobbleResponse {
     final responseXML = xml.XmlDocument.parse(response);
 
     bool status;
-    var scrobbledTracks = <ScrobbledTrack>[];
+    final scrobbledTracks = <ScrobbledTrack>[];
     int scrobbleAccepted;
     int scrobbleIgnored;
 
